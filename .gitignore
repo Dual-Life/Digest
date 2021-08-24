@@ -8,3 +8,5 @@
 /META.*
 /MANIFEST.bak
 /Digest-[0-9]*
+*.ERR
+*.bak
