@@ -3,7 +3,7 @@ package Digest;
 use strict;
 use warnings;
 
-our $VERSION = "1.20";
+our $VERSION = "1.20_01";
 
 our %MMAP = (
     "SHA-1"    => [ [ "Digest::SHA",  1 ], "Digest::SHA1", [ "Digest::SHA2", 1 ] ],
@@ -51,9 +51,31 @@ sub new {
                 next;
             }
         }
+        _ensure_utf8_aware($class);
         return $class->new( @args, @_ );
     }
     die $err;
+}
+
+my %_utf8_wrapped;
+
+sub _ensure_utf8_aware {
+    my $class = shift;
+    return if $_utf8_wrapped{$class}++;
+
+    no strict 'refs';
+    return unless defined &{"${class}::add"};
+
+    my $original_add = \&{"${class}::add"};
+    no warnings 'redefine';
+    *{"${class}::add"} = sub {
+        my $self = shift;
+        my @args = @_;
+        for my $arg (@args) {
+            utf8::encode($arg) if utf8::is_utf8($arg);
+        }
+        return $original_add->( $self, @args );
+    };
 }
 
 our $AUTOLOAD;
@@ -199,9 +221,12 @@ of the $ctx object:
   $ctx->add("a", "b", "c");
   $ctx->add("abc");
 
-Most algorithms are only defined for strings of bytes and this method
-might therefore croak if the provided arguments contain chars with
-ordinal number above 255.
+If the provided arguments have Perl's internal UTF-8 flag set (e.g.
+from C<use utf8> or C<utf8::upgrade>), they are automatically encoded
+to their UTF-8 byte representation before being passed to the digest
+algorithm.  This ensures the digest is computed over the UTF-8 encoded
+bytes, matching the behavior of external tools like C<openssl dgst>.
+The original strings are not modified.
 
 =item $ctx->addfile( $io_handle )
 

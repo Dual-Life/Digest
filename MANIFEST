@@ -10,4 +10,6 @@ t/base.t
 t/digest.t
 t/file.t
 t/lib/Digest/Dummy.pm
+t/lib/Digest/TestBytes.pm
 t/security.t
+t/unicode.t
