@@ -26,6 +26,17 @@ our %MMAP = (
 sub new {
     shift;    # class ignored
     my $algorithm = shift;
+
+    # Extract encoding option if present
+    my $encoding;
+    for (my $i = 0; $i < @_; $i++) {
+        if (defined $_[$i] && $_[$i] eq 'encoding') {
+            $encoding = $_[$i + 1];
+            splice(@_, $i, 2);
+            last;
+        }
+    }
+
     my $impl      = $MMAP{$algorithm} || do {
         $algorithm =~ s/\W+//g;
         "Digest::$algorithm";
@@ -51,7 +62,16 @@ sub new {
                 next;
             }
         }
-        return $class->new( @args, @_ );
+        my $ctx = $class->new( @args, @_ );
+        if ($encoding) {
+            require Encode;
+            require Carp;
+            Encode::find_encoding($encoding)
+                or Carp::croak("Unknown encoding '$encoding'");
+            require Digest::Encoder;
+            $ctx = Digest::Encoder->_wrap($ctx, $encoding);
+        }
+        return $ctx;
     }
     die $err;
 }
@@ -152,6 +172,8 @@ The following methods are available for all C<Digest::> modules:
 
 =item $ctx = Digest->new(XXX => $arg,...)
 
+=item $ctx = Digest->new(XXX => $arg,..., encoding => $enc)
+
 =item $ctx = Digest::XXX->new($arg,...)
 
 The constructor returns some object that encapsulate the state of the
@@ -164,6 +186,22 @@ load the right module on first use.  The second form allow you to use
 algorithm names which contains letters which are not legal perl
 identifiers, e.g. "SHA-1".  If no implementation for the given algorithm
 can be found, then an exception is raised.
+
+If the C<encoding> option is provided, all strings passed to C<add()>
+will be encoded using L<Encode> before being digested.  This ensures
+that the same characters always produce the same digest regardless of
+Perl's internal string representation:
+
+  # These will always produce the same digest:
+  my $ctx = Digest->new("SHA-256", encoding => "UTF-8");
+  $ctx->add($unicode_string);
+
+Without an explicit encoding, digest algorithms operate on the raw bytes
+of the string's internal representation, which may differ between Latin-1
+and UTF-8 encoded strings even when they contain the same characters.
+
+The C<encoding> name can be any encoding supported by the L<Encode> module.
+An exception is raised if the encoding is not recognized.
 
 To know what arguments (if any) the constructor takes (the C<$args,...> above)
 consult the docs for the specific digest implementation.
