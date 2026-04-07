@@ -26,11 +26,11 @@ my %WriteMakefile_args = (
         'dynamic_config' => 0,
         'resources'      => {
             'license'    => ['http://dev.perl.org/licenses/'],
-            'bugtracker' => { 'web' => 'https://github.com/Dual-Life/digest/issues' },
+            'bugtracker' => { 'web' => 'https://github.com/Dual-Life/Digest/issues' },
             'repository' => {
                 'type' => 'git',
-                'url'  => 'https://github.com/Dual-Life/digest.git',
-                'web'  => 'https://github.com/Dual-Life/digest',
+                'url'  => 'https://github.com/Dual-Life/Digest.git',
+                'web'  => 'https://github.com/Dual-Life/Digest',
             },
         }
     },
