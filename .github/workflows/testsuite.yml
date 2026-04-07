@@ -103,3 +103,34 @@ jobs:
         run: perl -I$(pwd) Makefile.PL
       - name: make test
         run: make test
+
+  windows:
+    needs: [ubuntu]
+    env:
+      PERL_USE_UNSAFE_INC: 0
+      AUTHOR_TESTING: 1
+      AUTOMATED_TESTING: 1
+      RELEASE_TESTING: 1
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        perl-version: [latest]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl-version }}
+      - run: perl -V
+      - name: install dependencies
+        uses: perl-actions/install-with-cpm@v1
+        with:
+          cpanfile: "cpanfile"
+      - name: Makefile.PL
+        run: perl Makefile.PL
+      - name: make test
+        run: gmake test
