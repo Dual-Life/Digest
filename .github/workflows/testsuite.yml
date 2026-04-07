@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: perl -V
       - name: install dependencies
         uses: perl-actions/install-with-cpm@v1
@@ -65,7 +65,7 @@ jobs:
       image: perl:${{ matrix.perl-version }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: perl -V
       - name: install dependencies
         uses: perl-actions/install-with-cpm@v1
@@ -93,7 +93,7 @@ jobs:
         perl-version: [latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: perl -V
       - name: install dependencies
         uses: perl-actions/install-with-cpm@v1
