@@ -129,6 +129,12 @@ representation of the digest with any trailing padding removed.  The
 string will be about 30% longer than the binary version.
 L<MIME::Base64> tells you more about this encoding.
 
+=item I<base64url>
+
+Same as base64, but using the URL-safe alphabet (C<-> instead of C<+>,
+C<_> instead of C</>) as defined in RFC 4648, section 5.  This variant
+is safe for use in URLs and filenames without additional encoding.
+
 =back
 
 
@@ -265,6 +271,13 @@ Same as $ctx->digest, but will return the digest in hexadecimal form.
 
 Same as $ctx->digest, but will return the digest as a base64 encoded
 string without padding.
+
+=item $ctx->b64url_digest
+
+Same as $ctx->b64digest, but will return the digest using the
+URL-safe base64 encoding (C<-> instead of C<+>, C<_> instead of C</>)
+without padding.  This is useful for embedding digests in URLs and
+filenames.  See L<RFC 4648, section 5|https://tools.ietf.org/html/rfc4648#section-5>.
 
 =item $ctx->base64_padded_digest
 

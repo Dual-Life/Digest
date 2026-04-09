@@ -64,6 +64,13 @@ sub b64digest {
     return $b64;
 }
 
+sub b64url_digest {
+    my $self = shift;
+    my $b64  = $self->b64digest(@_);
+    $b64 =~ tr[+/][-_];
+    return $b64;
+}
+
 sub base64_padded_digest {
     my $self = shift;
     require MIME::Base64;
@@ -87,7 +94,7 @@ Digest::base - Digest base class
 
 The C<Digest::base> class provide implementations of the methods
 C<addfile> and C<add_bits> in terms of C<add>, and of the methods
-C<hexdigest> and C<b64digest> in terms of C<digest>.
+C<hexdigest>, C<b64digest>, and C<b64url_digest> in terms of C<digest>.
 
 Digest implementations might want to inherit from this class to get
 this implementations of the alternative I<add> and I<digest> methods.
