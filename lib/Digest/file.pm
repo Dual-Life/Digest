@@ -3,12 +3,11 @@ package Digest::file;
 use strict;
 use warnings;
 
-use Exporter ();
+use parent 'Exporter';
 use Carp qw(croak);
 use Digest ();
 
 our $VERSION   = "1.20";
-our @ISA       = qw(Exporter);
 our @EXPORT_OK = qw(digest_file_ctx digest_file digest_file_hex digest_file_base64);
 
 sub digest_file_ctx {
@@ -52,10 +51,23 @@ Digest::file - Calculate digests of files
 
 =head1 DESCRIPTION
 
-This module provide 3 convenience functions to calculate the digest
+This module provide 4 convenience functions to calculate the digest
 of files.  The following functions are provided:
 
 =over
+
+=item digest_file_ctx( $file, $algorithm, [$arg,...] )
+
+This function will open the given file in binary mode, feed its
+contents to a new digest object, and return the L<Digest> context
+object.  This is useful when you need to call a specific digest
+method yourself rather than using one of the shorthand functions
+below.  The function will croak if no algorithm is specified or if
+it fails to open or read the file.
+
+The $algorithm is a string like "MD2", "MD5", "SHA-1", "SHA-512".
+Additional arguments are passed to the constructor for the
+implementation of the given algorithm.
 
 =item digest_file( $file, $algorithm, [$arg,...] )
 

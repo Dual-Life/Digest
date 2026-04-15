@@ -64,6 +64,8 @@ sub AUTOLOAD {
     $class->new( $algorithm, @_ );
 }
 
+sub DESTROY { }    # prevent AUTOLOAD from catching implicit DESTROY calls
+
 1;
 
 __END__
