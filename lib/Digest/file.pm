@@ -3,7 +3,7 @@ package Digest::file;
 use strict;
 use warnings;
 
-use parent 'Exporter';
+use base 'Exporter';
 use Carp qw(croak);
 use Digest ();
 
