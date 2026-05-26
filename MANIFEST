@@ -2,12 +2,14 @@ Changes
 digest-bench
 lib/Digest.pm
 lib/Digest/base.pm
+lib/Digest/Encoder.pm
 lib/Digest/file.pm
 Makefile.PL
 MANIFEST			This list of files
 README
 t/base.t
 t/digest.t
+t/encoding.t
 t/file.t
 t/lib/Digest/Dummy.pm
 t/security.t
