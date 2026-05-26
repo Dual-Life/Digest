@@ -8,6 +8,7 @@ MANIFEST			This list of files
 README
 t/base.t
 t/digest.t
+t/dispatch.t
 t/file.t
 t/lib/Digest/Dummy.pm
 t/security.t
