@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 5;
+use Test::More tests => 6;
 
 use File::Temp 'tempfile';
 
@@ -32,7 +32,7 @@ use File::Temp 'tempfile';
     }
 }
 
-use Digest::file qw(digest_file digest_file_hex digest_file_base64);
+use Digest::file qw(digest_file digest_file_hex digest_file_base64 digest_file_base64url);
 
 {
     my ( $fh, $file ) = tempfile( UNLINK => 1 );
@@ -49,6 +49,14 @@ use Digest::file qw(digest_file digest_file_hex digest_file_base64);
     else {
         is( digest_file_hex( $file, "Foo" ), "30303035" );
         is( digest_file_base64( $file, "Foo" ), "MDAwNQ" );
+    }
+
+    # digest_file_base64url uses URL-safe alphabet
+    if ( ord('A') == 193 ) {    # EBCDIC.
+        is( digest_file_base64url( $file, "Foo" ), "8PDw9Q" );
+    }
+    else {
+        is( digest_file_base64url( $file, "Foo" ), "MDAwNQ" );
     }
 }
 

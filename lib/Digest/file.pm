@@ -9,7 +9,7 @@ use Digest ();
 
 our $VERSION   = "1.20";
 our @ISA       = qw(Exporter);
-our @EXPORT_OK = qw(digest_file_ctx digest_file digest_file_hex digest_file_base64);
+our @EXPORT_OK = qw(digest_file_ctx digest_file digest_file_hex digest_file_base64 digest_file_base64url);
 
 sub digest_file_ctx {
     my $file = shift;
@@ -34,6 +34,10 @@ sub digest_file_base64 {
     digest_file_ctx(@_)->b64digest;
 }
 
+sub digest_file_base64url {
+    digest_file_ctx(@_)->b64url_digest;
+}
+
 1;
 
 __END__
@@ -52,7 +56,7 @@ Digest::file - Calculate digests of files
 
 =head1 DESCRIPTION
 
-This module provide 3 convenience functions to calculate the digest
+This module provides convenience functions to calculate the digest
 of files.  The following functions are provided:
 
 =over
@@ -75,6 +79,11 @@ Same as digest_file(), but return the digest in hex form.
 
 Same as digest_file(), but return the digest as a base64 encoded
 string.
+
+=item digest_file_base64url( $file, $algorithm, [$arg,...] )
+
+Same as digest_file(), but return the digest using URL-safe base64
+encoding (C<-> instead of C<+>, C<_> instead of C</>) without padding.
 
 =back
 

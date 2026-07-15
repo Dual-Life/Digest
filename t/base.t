@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 18;
 
 use File::Temp 'tempfile';
 
@@ -86,3 +86,46 @@ is( $ctx->digest, "a0002" );
 
 $ctx->add_bits( "abc", 32 );
 is( $ctx->digest, "a0003" );
+
+# b64url_digest - no +/ chars in this digest, so same as b64digest
+$ctx->add("foo");
+is( $ctx->b64url_digest, $EBCDIC ? "hvDw8PM" : "ZjAwMDM",
+    "b64url_digest with no special chars" );
+
+# b64url_digest with binary data containing + and /
+{
+    package BinDigest;
+    require Digest::base;
+    our @ISA = qw(Digest::base);
+
+    sub new {
+        my $class = shift;
+        my $data = shift || "";
+        bless \$data, $class;
+    }
+
+    sub add {
+        my $self = shift;
+        $$self .= join("", @_);
+        return $self;
+    }
+
+    sub digest {
+        my $self = shift;
+        my $d = $$self;
+        $$self = "";
+        return $d;
+    }
+}
+
+# \x03\xe0\x00 encodes to "A+AA" in standard base64
+my $bin = BinDigest->new("\x03\xe0\x00");
+is( $bin->b64digest,     "A+AA", "b64digest with + char" );
+$bin = BinDigest->new("\x03\xe0\x00");
+is( $bin->b64url_digest, "A-AA", "b64url_digest translates + to -" );
+
+# \xff\xff\xfe encodes to "///+" in standard base64
+$bin = BinDigest->new("\xff\xff\xfe");
+is( $bin->b64digest,     "///+", "b64digest with / and + chars" );
+$bin = BinDigest->new("\xff\xff\xfe");
+is( $bin->b64url_digest, "___-", "b64url_digest translates / to _ and + to -" );
