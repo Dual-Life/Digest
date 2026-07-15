@@ -65,7 +65,7 @@ is( $ctx->b64digest, $EBCDIC ? "hvDw8PM" : "ZjAwMDM" );
     print $fh "abc" x 100, "\n";
     close($fh) || die;
 
-    open( my $fh2, $tempfile ) || die;
+    open( my $fh2, "<", $tempfile ) || die;
     $ctx->addfile($fh2);
     close($fh2);
 
