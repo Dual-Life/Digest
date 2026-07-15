@@ -59,7 +59,7 @@ sub hexdigest {
 
 sub b64digest {
     my $self = shift;
-    my $b64  = $self->base64_padded_digest;
+    my $b64  = $self->base64_padded_digest(@_);
     $b64 =~ s/=+$//;
     return $b64;
 }
